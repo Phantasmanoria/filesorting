@@ -3,7 +3,8 @@ require "colorize"
 
 class Col # カラー描写
   def cputs(words)
-    words = [[words, "green"]] if words.kind_of?(String) # 文字のみはgreen処理
+    words = [words, "green"] if words.kind_of?(String) # 文字のみはgreen処理
+    words = [words] if words[0].kind_of?(String) # 一次元配列は二次元変換
     for word,color in words
       color = Convert.num_color(color) if color.kind_of?(Integer) # 色数字変換
       color = "green" if color.nil?
@@ -15,7 +16,8 @@ class Col # カラー描写
     eval("STDERR.print word.colorize(:red)"); puts
   end
   def self.cputs(words)
-    words = [[words, "green"]] if words.kind_of?(String) # 文字のみはgreen処理
+    words = [words, "green"] if words.kind_of?(String) # 文字のみはgreen処理
+    words = [words] if words[0].kind_of?(String) # 一次元配列は二次元変換
     for word,color in words
       color = Convert.num_color(color) if color.kind_of?(Integer) # 色数字変換
       color = "green" if color.nil? 
