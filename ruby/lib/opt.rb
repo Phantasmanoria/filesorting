@@ -11,11 +11,10 @@ class Opt
     mix_check(param,yaml)
   end
 
-  
-  def param # オプションの表示
+  def param # paramの取得
     @params
   end
-
+  
   private
   def get_opt # オプションから情報を入手
     opt = OptionParser.new
@@ -31,8 +30,8 @@ class Opt
              'input folders (default:[./in])')  {|v| params[:i] = v}
       opt.on('-o [FOLDER]',
              'output folder (default:./out)')  {|v| params[:o] = v}
-      opt.on('-m [MODE]', ['DISP', 'DATE', 'SIZE', 'EXT'],
-             'mode (DISP | DATE | SIZE | EXT) (default:NONE)')  {|v| params[:m] = v}
+      opt.on('-m [MODE]', ['SORT', 'LIST', 'CONF', 'NONE'],
+             'mode (SORT | LIST | CONF | NONE) (default:NONE)')  {|v| params[:m] = v}
       opt.on('-l', 'log mode (default:off)')  {|v| params[:l] = v}
       opt.on('--init', 'reset all settings (default:off)')  {|v| params[:init] = v}
       opt.parse!(ARGV)
