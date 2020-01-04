@@ -5,24 +5,24 @@ require 'ruby-progressbar' # 経過時間表示
 
 #外部クラス読み込み
 path = File.expand_path('./lib')
+require path + "/convert"
 require path + "/opt"
 require path + "/input"
 require path + "/output"
 require path + "/sort"
 require path + "/display"
-require path + "/convert"
 require path + "/log"
 
 
-option = Opt.new
+option = Opt.new # オプション取得
 opt = option.param
 
 if opt[:m] == "NONE" # モード指定がない時, ここで選択する
-  puts("select mode! (1:SORT, 2:LIST, 3:CONF, 4:QUIT)")
+  Col.puts "select mode! (1:SORT, 2:LIST, 3:CONF, 4:QUIT)"
   opt[:m] = Convert.num_mode(gets.chomp)
 end
 
-puts "START #{opt[:m]} MODE!" # モード選択
+Col.cputs "START #{opt[:m]} MODE!" # モード選択
 
 if opt[:m] == "SORT" 
   puts "sort"
@@ -34,6 +34,6 @@ elsif opt[:m] == "QUIT"
   puts "quit this program."
   exit 0
 else # 例外処理(直接入力時に発揮)
-  STDERR.print("mode #{opt[:m]} is wrong mode!\n")
+  Col.err "mode #{opt[:m]} is wrong mode!"
   exit 1
 end

@@ -3,7 +3,7 @@ require 'optparse'
 require 'yaml'
 
 # 初期情報を取得
-class Opt
+class Opt < Col
 
   def initialize
     param = get_opt
@@ -36,7 +36,7 @@ class Opt
       opt.on('--init', 'reset all settings (default:off)')  {|v| params[:init] = v}
       opt.parse!(ARGV)
     rescue => e # エラー処理
-      puts "ERROR: #{e}.\n See #{opt}!"
+      cerr "ERROR: #{e}.\n See option!\n#{opt}"
       exit
     end
 
@@ -61,7 +61,7 @@ class Opt
   def yaml_load(conf) # yaml読み込み
     puts ("open config_file.")
     until File.exist?(conf) 
-      STDERR.print "ERROR: config_file #{conf} is not exist!\n"
+      cerr "ERROR: config_file #{conf} is not exist!\n"
       if conf != "config.yml"  # -fのコンフィグファイルが存在しないと標準ファイルに変更
         puts "change from #{conf} to config.yml"
         conf = "config.yml"
