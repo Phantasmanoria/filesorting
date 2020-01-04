@@ -4,14 +4,14 @@ require 'yaml'
 
 # 初期情報を取得
 class Opt < Col
-
+  
   def initialize
     param = get_opt
     yaml = yaml_load(param[:f])
     mix_check(param,yaml)
   end
 
-  def param # paramの取得
+  def param # paramの取得(外部取得を防ぐため)
     @params
   end
   
@@ -36,34 +36,34 @@ class Opt < Col
       opt.on('--init', 'reset all settings (default:off)')  {|v| params[:init] = v}
       opt.parse!(ARGV)
     rescue => e # エラー処理
-      cerr "ERROR: #{e}.\n See option!\n#{opt}"
+      cerr "ERROR: #{e}.\nSee option!\n#{opt}"
       exit
     end
 
     unless params[:init].nil? # init実行時は初期設定実行後に終了
-      puts "[[init mode]]"
+      cputs "[[init mode]]"
       unless File.exist?("in") # inファイル
-        puts "make input folder."
+        cputs "make input folder."
         Dir.mkdir("in")
       end
       unless File.exist?("out") # outファイル
-        puts "make output folder."
+        cputs "make output folder."
         Dir.mkdir("out")
       end
       FileUtils.rm("config.yml") if File.exist?("config.yml")
       mkconfig # configファイル作り直し
-      puts "reset all settings! exit process..."
+      cputs "reset all settings! exit process..."
       exit 0 # 終了
     end
     params
   end
 
   def yaml_load(conf) # yaml読み込み
-    puts ("open config_file.")
+    cputs "open config_file."
     until File.exist?(conf) 
       cerr "ERROR: config_file #{conf} is not exist!\n"
       if conf != "config.yml"  # -fのコンフィグファイルが存在しないと標準ファイルに変更
-        puts "change from #{conf} to config.yml"
+        cputs "change from #{conf} to config.yml"
         conf = "config.yml"
       else # 標準ファイルがなければ作成
         mkconfig
@@ -85,7 +85,7 @@ class Opt < Col
 
 
   def mkconfig # configファイル作成
-    puts ("making config_file ...")
+    cputs "making config_file ..."
     data = {
       "input_folders" => ["input"],
       "output_folder" => "output",
@@ -104,18 +104,18 @@ class Opt < Col
 
     for f_name in res[:i] # -iでのフォルダが存在しないとエラー終了
       unless Dir.exist?(f_name)
-        STDERR.print "ERROR: input_folder #{f_name} is not exist!\n"
+        cerr "ERROR: input_folder #{f_name} is not exist!"
         exit 1
       end
     end
 
     unless Dir.exist?(res[:o]) # -oでのフォルダが存在しないとエラー終了
-      STDERR.print "ERROR: output_folder #{f_name} is not exist!\n"
+      cerr "ERROR: output_folder #{f_name} is not exist!"
       exit 1
     end
 
     if res[:m].nil? # -mでのモードが該当しないとエラー終了(optperseによりnilになる)
-      STDERR.print "ERROR: invalid argument -m!(syntax error)\n"
+      cerr "ERROR: invalid argument -m!(syntax error)"
       exit 1
     end
     @params = res
