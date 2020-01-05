@@ -16,7 +16,7 @@ require path + "/log"
 option = Opt.new # オプション取得
 opt = option.param
 
-list = InOut.new(opt) # 入力リスト読み取り
+files = InOut.new(opt) # 入力リスト読み取り
 
 if opt[:m] == "NONE" # モード指定がない時, ここで選択する
   Col.cputs "select mode! (1:SORT, 2:LIST, 3:CONF, 4:QUIT)"
@@ -31,7 +31,7 @@ if opt[:m] == "SORT"
 elsif opt[:m] == "LIST"
   puts "list"
 elsif opt[:m] == "CONF"
-  puts "conf"
+  Display.conf(opt)
 elsif opt[:m] == "QUIT"
   puts "quit this program."
   exit 0

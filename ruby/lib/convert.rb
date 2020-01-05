@@ -34,8 +34,8 @@ class Convert # 小規模の変換等の機能の格納
 
   def self.num_mode(num) # 数字 -> モード
     if num.to_i >=1 && num.to_i <=4
-    list = ["SORT", "LIST", "CONF", "QUIT"]
-    eval("list[#{num.to_i-1}]")
+      list = ["SORT", "LIST", "CONF", "QUIT"]
+      eval("list[#{num.to_i-1}]")
     else nil
     end
   end
@@ -48,5 +48,16 @@ class Convert # 小規模の変換等の機能の格納
     else nil
     end
   end
+
+  def self.mode_expand(opt) # モード名の拡張
+    res = {}
+    list = {"f" => "config_file","m" => "mode", "i" => "input_folders", "o" => "output_folder", "l" => "log"}
+    opt.each do |key, value|
+      tmp = eval("list['#{key.to_s}']")
+      eval("res[:#{tmp}] = '#{value}'")
+    end
+    res
+  end
+
 
 end
