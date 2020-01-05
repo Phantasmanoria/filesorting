@@ -23,17 +23,19 @@ class Opt < Col
     opt = OptionParser.new
     params = {:m => "NONE"} # 初期値設定
     begin
-      opt.on('-f [FILE]', Array,
+      opt.on('-c [MODE, MODE...]',Array,
+             'classification (EXT,SIZE,DATE(e.g. EXT,DATE))(default:NONE)')  {|v| params[:c] = v}
+      opt.on('-f [FILE]',
              'config file (default:config.yml)')  {|v| params[:f] = v}
       opt.on('-i [FOLDER, FOLDER, ..]', Array,
              'input folders (default:./in)')  {|v| params[:i] = v}
+      opt.on('-l', 'log output(default:false)')  {|v| params[:l] = v}
       opt.on('-m [MODE]', ['SORT', 'LIST', 'CONF', 'NONE'],
              'mode (SORT | LIST | CONF | NONE) (default:NONE)')  {|v| params[:m] = v}
       opt.on('-o [FOLDER]',
              'output folder (default:./out)')  {|v| params[:o] = v}
-      opt.on('-c [MODE, MODE...]',Array,
-             'classification (EXT,SIZE,DATE(e.g. EXT,DATE))(default:NONE)')  {|v| params[:c] = v}
-      opt.on('-l', 'log output(default:false)')  {|v| params[:l] = v}
+      opt.on('-s [STRING]',/^[0-9]{1,3}[A-Z]{1,2}$/,
+             'size interval in -c = SIZE(e.g. 24KB)(default:NONE)')  {|v| params[:s] = v}
       opt.on('--init', 'reset all settings (default:off)')  {|v| params[:init] = v}
       opt.parse!(ARGV)
     rescue => e # エラー処理
@@ -46,28 +48,32 @@ class Opt < Col
     params[:i] = ["in"] if params[:i].nil?
     params[:o] = "out" if params[:o].nil?
     params[:c] = ["NONE"] if params[:c].nil?
+    params[:s] = "NONE" if params[:s].nil?
 
-    unless params[:init].nil? # init実行時は初期設定実行後に終了
-      cputs "[[init mode]]"
-      unless File.exist?("in") # inファイル
-        cputs "make input folder."
-        Dir.mkdir("in")
-      end
-      unless File.exist?("out") # outファイル
-        cputs "make output folder."
-        Dir.mkdir("out")
-      end
-      FileUtils.rm("config.yml") if File.exist?("config.yml")
-      mkconfig # configファイル作り直し
-      cputs "reset all settings! exit process..."
-      exit 0 # 終了
-    end
+    init unless params[:init].nil? # initフラグがあれば初期化実行
+
     params
+  end
+
+  def init
+    cputs "[[init mode]]"
+    unless File.exist?("in") # inファイル
+      cputs "make input folder."
+      Dir.mkdir("in")
+    end
+    unless File.exist?("out") # outファイル
+      cputs "make output folder."
+      Dir.mkdir("out")
+    end
+    FileUtils.rm("config.yml") if File.exist?("config.yml")
+    mkconfig # configファイル作り直し
+    cputs "reset all settings! exit process..."
+    exit 0 # 終了
   end
 
   def yaml_load(conf) # yaml読み込み
     until File.exist?(conf) 
-      cerr "ERROR: config_file #{conf} is not exist!\n"
+      cerr "ERROR: config_file #{conf} is not exist!"
       if conf != "config.yml"  # -fのコンフィグファイルが存在しないと標準ファイルに変更
         cputs "change from #{conf} to config.yml"
         conf = "config.yml"
@@ -111,7 +117,7 @@ class Opt < Col
     res[:f] = conf # fオプションの適応
 
     err = [] # エラー格納
-    
+
     for f_name in res[:i] # -iでのフォルダが存在しないとエラー
       unless Dir.exist?(f_name)
         cerr "ERROR: input_folder #{f_name} is not exist!"
@@ -131,11 +137,11 @@ class Opt < Col
       err.push(Convert.opt_name("m"))
     end
 
-    unless res[:c].nil? # -sがnilじゃない時はopt指定時のみ
+    unless res[:c].nil? # -cがnilじゃない時はopt指定時のみ
       j = ["EXT", "SIZE", "DATE", "NONE"]
       res[:c].each do |sort|
         if not j.include?(sort) # 候補外はエラー
-          cerr "ERROR: invalid argument -s!(syntax error)"
+          cerr "ERROR: invalid argument -c!(syntax error)"
           err.push(Convert.opt_name("c"))
         elsif sort == "NONE" # NONEが含まれていたらNONEに強制変更
           res[:c] = ["NONE"]
@@ -145,6 +151,25 @@ class Opt < Col
       res[:c] = ["NONE"]
     end
 
+    puts res[:s]
+    if res[:s].nil? # -mでのモードが該当しないとエラー
+        cerr "ERROR: invalid argument -s!(syntax error)"
+        err.push(Convert.opt_name("s"))      
+    elsif res[:s] != "NONE"
+      byte = ["B","KB","MB","GB","TB", "PB"]
+      /^([0-9]{1,3})([BKMGTP]{1,2})$/ =~ res[:s]
+      if $1.nil? || $2.nil? || $1.to_i == 0
+        cerr "ERROR: invalid argument -s!(number error)"
+        err.push(Convert.opt_name("s"))
+      end
+      unless byte.include?($2)
+        cerr "ERROR: invalid argument -s!(byte error)"
+        err.push(Convert.opt_name("s"))
+      end
+    end
+
+
+    
     Display.conf(res,err) if err.length != 0 # エラー内容表示
     
     @params = res

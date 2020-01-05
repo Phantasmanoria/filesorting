@@ -83,6 +83,7 @@ class Convert # 小規模の変換等の機能の格納
             "i" => "input_folders",
             "o" => "output_folder",
             "c" => "classification",
+            "s" => "size",
             "l" => "log"
            }
     eval("list['#{str}']")
