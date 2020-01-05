@@ -21,11 +21,7 @@ class Opt < Col
   private
   def get_opt # オプションから情報を入手
     opt = OptionParser.new
-    params = {f:"config.yml", # 初期値の設定
-              m:"NONE",
-              i:["in"],
-              o:"out",
-             }         
+    params = {:m => "NONE"} # 初期値設定
     begin
       opt.on('-f [FILE]', Array,
              'config file (default:config.yml)')  {|v| params[:f] = v}
@@ -44,6 +40,12 @@ class Opt < Col
       cerr "ERROR: #{e}.\nSee option!\n#{opt}"
       exit
     end
+
+    # 初期値設定
+    params[:f] = "config.yml" if params[:f].nil?
+    params[:i] = ["in"] if params[:i].nil?
+    params[:o] = "out" if params[:o].nil?
+    params[:s] = ["NONE"] if params[:s].nil?
 
     unless params[:init].nil? # init実行時は初期設定実行後に終了
       cputs "[[init mode]]"
@@ -92,10 +94,10 @@ class Opt < Col
   def mkconfig # configファイル作成
     cputs "making config_file ..."
     data = {
-      "input_folders" => ["input"],
-      "output_folder" => "output",
-      "mode" => nil,
-      "sort" => nil,
+      "input_folders" => "in",
+      "output_folder" => "out",
+      "mode" => "NONE",
+      "sort" => "NONE",
       "log" => nil
     }
     YAML.dump(data, File.open("config.yml", "w"))
