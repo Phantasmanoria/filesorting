@@ -59,5 +59,30 @@ class Convert # 小規模の変換等の機能の格納
     res
   end
 
+  def self.str_reduct(str,len,side="l") # 文字列の略化
+    res = str; len -= 1
+    res = "~"+res[str.length-len,len] if str.length > len+1 # オーバー時に縮小
+    res = res.ljust(len+1) if side == "l" # 左調整
+    res = res.rjust(len+1) if side == "r" # 右調整
+    res
+  end
 
+  def self.num_byte(num) # バイト数の文字列変換
+    units = ["  B"," KB"," MB"," GB"," TB"," PB"] # 
+    u = 0
+    num = num.to_i
+    
+    while num / 1000.0 > 1.0
+      u += 1
+      num /= 1000
+    end
+    num.to_s + units[u]
+  end
+
+  def self.str_ext(str1)
+    str2 = str1.sub(/[^\.]*\./, "")
+    str2= "NONE" if str1 == str2
+    str2
+  end
+  
 end

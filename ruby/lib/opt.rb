@@ -112,6 +112,8 @@ class Opt < Col
     unless Dir.exist?(res[:o]) # -oでのフォルダが存在しないとエラー終了
       cerr "ERROR: output_folder #{f_name} is not exist!"
       exit 1
+    else
+      res[:o] = File.expand_path(res[:o])
     end
 
     if res[:m].nil? # -mでのモードが該当しないとエラー終了(optperseによりnilになる)

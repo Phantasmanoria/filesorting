@@ -29,7 +29,7 @@ Col.cputs "START #{opt[:m]} MODE!" # モード選択
 if opt[:m] == "SORT" 
   puts "sort"
 elsif opt[:m] == "LIST"
-  puts "list"
+  Display.file_list(files.list)
 elsif opt[:m] == "CONF"
   Display.conf(opt)
 elsif opt[:m] == "QUIT"
