@@ -33,7 +33,7 @@ class Display < Col
              "input_folders" => "[\"in\"]",
              "output_folder" => File.expand_path("out"),
              "log" => nil,
-             "sort" => "[\"NONE\"]"
+             "classification" => "[\"NONE\"]"
             }
     val2 = eval("default['#{key}']")
     val2 == val1

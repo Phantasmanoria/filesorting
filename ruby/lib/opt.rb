@@ -31,8 +31,8 @@ class Opt < Col
              'mode (SORT | LIST | CONF | NONE) (default:NONE)')  {|v| params[:m] = v}
       opt.on('-o [FOLDER]',
              'output folder (default:./out)')  {|v| params[:o] = v}
-      opt.on('-s [MODE, MODE...]',Array,
-             'sort (EXT, SIZE, DATE (e.g. EXT,DATE)) (default:NONE)')  {|v| params[:s] = v}
+      opt.on('-c [MODE, MODE...]',Array,
+             'classification (EXT,SIZE,DATE(e.g. EXT,DATE))(default:NONE)')  {|v| params[:c] = v}
       opt.on('-l', 'log output(default:false)')  {|v| params[:l] = v}
       opt.on('--init', 'reset all settings (default:off)')  {|v| params[:init] = v}
       opt.parse!(ARGV)
@@ -45,7 +45,7 @@ class Opt < Col
     params[:f] = "config.yml" if params[:f].nil?
     params[:i] = ["in"] if params[:i].nil?
     params[:o] = "out" if params[:o].nil?
-    params[:s] = ["NONE"] if params[:s].nil?
+    params[:c] = ["NONE"] if params[:c].nil?
 
     unless params[:init].nil? # init実行時は初期設定実行後に終了
       cputs "[[init mode]]"
@@ -82,7 +82,7 @@ class Opt < Col
     res[:i] = yaml[:input_folders] if yaml[:input_folders] 
     res[:o] = yaml[:output_folder] if yaml[:output_folder]
     res[:m] = yaml[:mode] if yaml[:mode] 
-    res[:s] = yaml[:sort] if yaml[:sort] 
+    res[:c] = yaml[:classification] if yaml[:classification] 
     res[:l] = true if yaml[:log] == "true"
 
     res[:f] = conf # conf情報上書き
@@ -94,10 +94,10 @@ class Opt < Col
   def mkconfig # configファイル作成
     cputs "making config_file ..."
     data = {
-      "input_folders" => "in",
+      "input_folders" => ["in"],
       "output_folder" => "out",
       "mode" => "NONE",
-      "sort" => "NONE",
+      "classification" => "NONE",
       "log" => nil
     }
     YAML.dump(data, File.open("config.yml", "w"))
@@ -131,18 +131,18 @@ class Opt < Col
       err.push(Convert.opt_name("m"))
     end
 
-    unless res[:s].nil? # -sがnilじゃない時はopt指定時のみ
+    unless res[:c].nil? # -sがnilじゃない時はopt指定時のみ
       j = ["EXT", "SIZE", "DATE", "NONE"]
-      res[:s].each do |sort|
+      res[:c].each do |sort|
         if not j.include?(sort) # 候補外はエラー
           cerr "ERROR: invalid argument -s!(syntax error)"
-          err.push(Convert.opt_name("s"))
+          err.push(Convert.opt_name("c"))
         elsif sort == "NONE" # NONEが含まれていたらNONEに強制変更
-          res[:s] = ["NONE"]
+          res[:c] = ["NONE"]
         end
       end
     else
-      res[:s] = ["NONE"]
+      res[:c] = ["NONE"]
     end
 
     Display.conf(res,err) if err.length != 0 # エラー内容表示

@@ -4,11 +4,10 @@ class Sort < Col # 移動先の変更を行う
   def self.main(list, opt)
     puts list
 
-
-    if opt[:s].include?("NONE") # NONE時はここで入力
-      tmp = []; s = "" # 一時変数
-      cprint ['input sort (EXT, SIZE, DATE (e.g. EXT,DATE)) stop: e ',3]
-      tmp.push(s) while (s = Col.cgets) != "e"
+    if opt[:c].include?("NONE") # NONE時はここで入力
+      tmp = []; c = "" # 一時変数
+      cprint ['input classification (EXT, SIZE, DATE (e.g. EXT,DATE)) stop: e ',3]
+      tmp.push(c) while (c = Col.cgets) != "e"
 
       j = ["EXT", "SIZE", "DATE"] # 検証
       tmp.each do |sort|
@@ -17,11 +16,10 @@ class Sort < Col # 移動先の変更を行う
           exit 1
         end
       end
-      opt[:s] = tmp
+      opt[:c] = tmp
     end
-
     
-    for sort in opt[:s] # 各ソートを実行
+    for sort in opt[:c] # 各ソートを実行
       cputs "START #{sort} SORT!"
       list = ext(list, opt)  if sort == "EXT"
       list = size(list, opt) if sort == "SIZE"
@@ -43,9 +41,22 @@ class Sort < Col # 移動先の変更を行う
   end
 
 
-  def self.size(list, opt)
+  def self.size(list, opt) # サイズ
+    res = []
+    list.each do |file, path, info|
+      
 
 
+
+
+
+
+
+
+      
+      res.push([file, path+"/"+Convert.str_extfolder(file), info])
+    end
+    res
   end
 
 

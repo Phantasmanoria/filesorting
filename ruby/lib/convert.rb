@@ -82,7 +82,7 @@ class Convert # 小規模の変換等の機能の格納
             "m" => "mode",
             "i" => "input_folders",
             "o" => "output_folder",
-            "s" => "sort",
+            "c" => "classification",
             "l" => "log"
            }
     eval("list['#{str}']")
