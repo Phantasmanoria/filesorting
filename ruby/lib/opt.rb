@@ -6,8 +6,11 @@ require 'yaml'
 class Opt < Col
   
   def initialize
+    cputs "load options."
     param = get_opt
+    cputs "load config_file."
     yaml = yaml_load(param[:f])
+    cputs "check options.."
     mix_check(param,yaml)
   end
 
@@ -59,7 +62,6 @@ class Opt < Col
   end
 
   def yaml_load(conf) # yaml読み込み
-    cputs "open config_file."
     until File.exist?(conf) 
       cerr "ERROR: config_file #{conf} is not exist!\n"
       if conf != "config.yml"  # -fのコンフィグファイルが存在しないと標準ファイルに変更

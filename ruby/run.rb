@@ -19,12 +19,12 @@ opt = option.param
 files = InOut.new(opt) # 入力リスト読み取り
 
 if opt[:m] == "NONE" # モード指定がない時, ここで選択する
-  Col.cputs "select mode! (1:SORT, 2:LIST, 3:CONF, 4:QUIT)"
+  Col.cputs ["select mode! (1:SORT, 2:LIST, 3:CONF, 4:QUIT)", 3]
   opt[:m] = Convert.num_mode(gets.chomp)
 end
 
 
-Col.cputs "START #{opt[:m]} MODE!" # モード選択
+Col.cputs "START #{opt[:m]} MODE!" # モード選択宣言
 
 if opt[:m] == "SORT" 
   puts "sort"
@@ -33,7 +33,7 @@ elsif opt[:m] == "LIST"
 elsif opt[:m] == "CONF"
   Display.conf(opt)
 elsif opt[:m] == "QUIT"
-  puts "quit this program."
+  Col.cputs "quit this program."
   exit 0
 else # 例外処理(直接入力時に発揮)
   Col.cerr "mode #{opt[:m]} is wrong mode!"
