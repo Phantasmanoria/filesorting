@@ -19,14 +19,14 @@ files = InOut.new(opt) # 入力リスト読み取り
 
 if opt[:m] == "NONE" # モード指定がない時, ここで選択する
   Col.cputs ["select mode! (1:SORT, 2:LIST, 3:CONF, 4:QUIT)", 3]
-  opt[:m] = Convert.num_mode(gets.chomp)
+  opt[:m] = Convert.num_mode(Col.cgets)
 end
 
 
 Col.cputs "START #{opt[:m]} MODE!" # モード選択宣言
 
 if opt[:m] == "SORT" 
-  files.list = Sort.classification(files.list,opt)
+  files.list = Sort.main(files.list,opt)
 elsif opt[:m] == "LIST"
   Display.file_list(files.list)
 elsif opt[:m] == "CONF"

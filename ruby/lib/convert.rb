@@ -1,8 +1,8 @@
 # coding: utf-8
 require "colorize"
 
-class Col # カラー描写
-  def cputs(words)
+class Col # カラー描写(カーネル上書きは継承のためしていない)
+  def cprint(words)
     words = [words, "green"] if words.kind_of?(String) # 文字のみはgreen処理
     words = [words] if words[0].kind_of?(String) # 一次元配列は二次元変換
     for word,color in words
@@ -10,12 +10,21 @@ class Col # カラー描写
       color = "green" if color.nil?
       eval("print word.colorize(:#{color})")
     end
+  end
+  def cputs(words)
+    cprint(words)
     puts 
+  end
+  def cgets
+    cprint([">>",5])
+    res = gets
+    res.chomp
   end
   def cerr(word)
     eval("STDERR.print word.colorize(:red)"); puts
   end
-  def self.cputs(words)
+  
+  def self.cprint(words)
     words = [words, "green"] if words.kind_of?(String) # 文字のみはgreen処理
     words = [words] if words[0].kind_of?(String) # 一次元配列は二次元変換
     for word,color in words
@@ -23,7 +32,15 @@ class Col # カラー描写
       color = "green" if color.nil? 
       eval("print word.colorize(:#{color})")
     end
+  end
+  def self.cputs(words)
+    cprint(words)
     puts
+  end
+  def self.cgets
+    cprint([">>",5])
+    res = gets
+    res.chomp
   end
   def self.cerr(word)
     eval("STDERR.print word.colorize(:red)"); puts
@@ -92,9 +109,16 @@ class Convert # 小規模の変換等の機能の格納
   end
 
   def self.str_ext(str1) # 拡張子抽出
+    str1 = str1.gsub(/[^\/]*\//, "")
     str2 = str1.sub(/[^\.]*\./, "")
     str2= "NONE" if str1 == str2
     str2
+  end
+
+  def self.str_extfolder(str) # 拡張子抽出
+    str = str_ext(str)
+    str.gsub!(/\./, "\\\.")
+    str
   end
 
   

@@ -3,7 +3,7 @@
 class Display < Col
 
   def self.conf(opt, err=[])
-    cputs ["CONFIG LIST(default:green)", 3] # 表題
+    cputs ["CONFIG LIST(default:green, modify:blue, error:red)", 3] # 表題
     cputs ["-"*`tput cols`.chomp.to_i, 3] # 端末一面の横線
     cputs [["|",3],["option".ljust(20),3],["|",3],["value".ljust(40),3], ["|",3]]
     cputs ["-"*`tput cols`.chomp.to_i, 3]
