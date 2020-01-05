@@ -15,7 +15,6 @@ require path + "/log"
 
 option = Opt.new # オプション取得
 opt = option.param
-
 files = InOut.new(opt) # 入力リスト読み取り
 
 if opt[:m] == "NONE" # モード指定がない時, ここで選択する
@@ -27,7 +26,7 @@ end
 Col.cputs "START #{opt[:m]} MODE!" # モード選択宣言
 
 if opt[:m] == "SORT" 
-  puts "sort"
+  files.list = Sort.classification(files.list,opt)
 elsif opt[:m] == "LIST"
   Display.file_list(files.list)
 elsif opt[:m] == "CONF"

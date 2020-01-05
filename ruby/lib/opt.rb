@@ -10,7 +10,7 @@ class Opt < Col
     param = get_opt
     cputs "load config_file."
     yaml = yaml_load(param[:f])
-    cputs "check options.."
+    cputs "check options."
     mix_check(param,yaml)
   end
 
@@ -30,12 +30,14 @@ class Opt < Col
       opt.on('-f [FILE]', Array,
              'config file (default:config.yml)')  {|v| params[:f] = v}
       opt.on('-i [FOLDER, FOLDER, ..]', Array,
-             'input folders (default:[./in])')  {|v| params[:i] = v}
-      opt.on('-o [FOLDER]',
-             'output folder (default:./out)')  {|v| params[:o] = v}
+             'input folders (default:./in)')  {|v| params[:i] = v}
       opt.on('-m [MODE]', ['SORT', 'LIST', 'CONF', 'NONE'],
              'mode (SORT | LIST | CONF | NONE) (default:NONE)')  {|v| params[:m] = v}
-      opt.on('-l', 'log mode (default:off)')  {|v| params[:l] = v}
+      opt.on('-o [FOLDER]',
+             'output folder (default:./out)')  {|v| params[:o] = v}
+      opt.on('-s [MODE, MODE...]',Array,
+             'sort (EXT, SIZE, DATE (e.g. EXT,DATE)) (default:NONE)')  {|v| params[:s] = v}
+      opt.on('-l', 'log output(default:false)')  {|v| params[:l] = v}
       opt.on('--init', 'reset all settings (default:off)')  {|v| params[:init] = v}
       opt.parse!(ARGV)
     rescue => e # エラー処理
@@ -77,8 +79,9 @@ class Opt < Col
     # 情報読み取り
     res[:i] = yaml[:input_folders] if yaml[:input_folders] 
     res[:o] = yaml[:output_folder] if yaml[:output_folder]
-    res[:m] = yaml[:mode] if yaml[:mode]
-    res[:l] = yaml[:log] if yaml[:log] == "true"
+    res[:m] = yaml[:mode] if yaml[:mode] 
+    res[:s] = yaml[:sort] if yaml[:sort] 
+    res[:l] = true if yaml[:log] == "true"
 
     res[:f] = conf # conf情報上書き
     
@@ -92,6 +95,7 @@ class Opt < Col
       "input_folders" => ["input"],
       "output_folder" => "output",
       "mode" => nil,
+      "sort" => nil,
       "log" => nil
     }
     YAML.dump(data, File.open("config.yml", "w"))
@@ -104,24 +108,43 @@ class Opt < Col
     res = yaml.merge(param) # yaml設定よりもopt設定の方を優先で上書き
     res[:f] = conf # fオプションの適応
 
-    for f_name in res[:i] # -iでのフォルダが存在しないとエラー終了
+    err = [] # エラー格納
+    
+    for f_name in res[:i] # -iでのフォルダが存在しないとエラー
       unless Dir.exist?(f_name)
         cerr "ERROR: input_folder #{f_name} is not exist!"
-        exit 1
+        err.push(Convert.opt_name("i"))
       end
     end
 
-    unless Dir.exist?(res[:o]) # -oでのフォルダが存在しないとエラー終了
+    unless Dir.exist?(res[:o]) # -oでのフォルダが存在しないとエラー
       cerr "ERROR: output_folder #{f_name} is not exist!"
-      exit 1
+      err.push(Convert.opt_name("o"))
     else
       res[:o] = File.expand_path(res[:o])
     end
 
-    if res[:m].nil? # -mでのモードが該当しないとエラー終了(optperseによりnilになる)
+    if res[:m].nil? # -mでのモードが該当しないとエラー(optperseによりnilになる)
       cerr "ERROR: invalid argument -m!(syntax error)"
-      exit 1
+      err.push(Convert.opt_name("m"))
     end
+
+    unless res[:s].nil? # -sがnilじゃない時はopt指定時のみ
+      j = ["EXT", "SIZE", "DATE", "NONE"]
+      res[:s].each do |sort|
+        if not j.include?(sort) # 候補外はエラー
+          cerr "ERROR: invalid argument -s!(syntax error)"
+          err.push(Convert.opt_name("s"))
+        elsif sort == "NONE" # NONEが含まれていたらNONEに強制変更
+          res[:s] = ["NONE"]
+        end
+      end
+    else
+      res[:s] = ["NONE"]
+    end
+
+    Display.conf(res,err) if err.length != 0 # エラー内容表示
+    
     @params = res
   end
 

@@ -25,7 +25,7 @@ class InOut < Col
           input(tpwd, out, [path])
         elsif File.file?(path) # ファイルならリスト挿入
 #          puts out
-          @list.push([path,out,File.stat(path)]) # [初期パス, 移動先パス, 情報]
+          @list.push([path,out,File.stat(path)]) # [ファイルの初期パス, 初期移動先パス, 情報]
         end
       end
     end

@@ -30,6 +30,8 @@ class Col # カラー描写
   end
 end
 
+
+
 class Convert # 小規模の変換等の機能の格納
 
   def self.num_mode(num) # 数字 -> モード
@@ -49,14 +51,24 @@ class Convert # 小規模の変換等の機能の格納
     end
   end
 
-  def self.mode_expand(opt) # モード名の拡張
+  def self.opt_expand(opt) # モード名の拡張
     res = {}
-    list = {"f" => "config_file","m" => "mode", "i" => "input_folders", "o" => "output_folder", "l" => "log"}
     opt.each do |key, value|
-      tmp = eval("list['#{key.to_s}']")
+      tmp = opt_name(key.to_s)
       eval("res[:#{tmp}] = '#{value}'")
     end
     res
+  end
+
+  def self.opt_name(str) # モード名返信
+    list = {"f" => "config_file",
+            "m" => "mode",
+            "i" => "input_folders",
+            "o" => "output_folder",
+            "s" => "sort",
+            "l" => "log"
+           }
+    eval("list['#{str}']")
   end
 
   def self.str_reduct(str,len,side="l") # 文字列の略化
@@ -79,10 +91,11 @@ class Convert # 小規模の変換等の機能の格納
     num.to_s + units[u]
   end
 
-  def self.str_ext(str1)
+  def self.str_ext(str1) # 拡張子抽出
     str2 = str1.sub(/[^\.]*\./, "")
     str2= "NONE" if str1 == str2
     str2
   end
+
   
 end
