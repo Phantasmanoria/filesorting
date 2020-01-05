@@ -35,6 +35,6 @@ elsif opt[:m] == "QUIT"
   Col.cputs "quit this program."
   exit 0
 else # 例外処理(直接入力時に発揮)
-  Col.cerr "mode #{opt[:m]} is wrong mode!"
+  Col.cerr "ERROR: mode #{opt[:m]} is wrong mode!"
   exit 1
 end
