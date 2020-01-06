@@ -8,7 +8,7 @@ Perl版とRuby版があるが, Perl版をもう一度作り直したのがRuby�
 まだリファクタリングとか何も知らない時に作ったすごい汚いコード.  
 汚すぎて書き直す気が起きないくらいにはスパゲッティーコードしてる.  
 ていうかコメント書かなさすぎてそもそもわけわからない事態になってる.  
-一応努力の証として残すためにここに残す.  
+比較の対象とするためにここに残す.  
 perl版のREAD MEは[こちら](https://github.com/Phantasmanoria/filesorting/blob/master/perl/guide.txt)を参照.  
 
 ## Ruby版
