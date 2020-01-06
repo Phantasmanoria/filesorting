@@ -34,7 +34,8 @@ class Display < Col
              "output_folder" => File.expand_path("out"),
              "log" => nil,
              "classification" => "[\"NONE\"]",
-             "size" => "NONE"
+             "size" => "NONE",
+             "date" => "NONE"
             }
     val2 = eval("default['#{key}']")
     val2 == val1
@@ -49,7 +50,7 @@ class Display < Col
     
     lists.each do |file, tmp, info| # 中身表示
       cputs [["|",3],[Convert.str_reduct(file,40)],["|",3],[Convert.num_byte(info.size.to_s).rjust(6)],
-             ["|",3],[Convert.str_ext(file).rjust(10)],["|",3],[info.ctime.strftime("%Y/%m/%d %H:%M:%S")],["|",3]]
+             ["|",3],[Convert.str_ext(file).rjust(10)],["|",3],[info.mtime.strftime("%Y/%m/%d %H:%M:%S")],["|",3]]
     end
     
     cputs ["-"*`tput cols`.chomp.to_i, 3]

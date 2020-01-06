@@ -21,17 +21,19 @@ class Opt < Col
   private
   def get_opt # オプションから情報を入手
     opt = OptionParser.new
-    params = {:m => "NONE"} # 初期値設定
+    params = {:d => "NONE", :m => "NONE"} # 初期値設定
     begin
       opt.on('-c [MODE, MODE...]',Array,
              'classification (EXT,SIZE,DATE(e.g. EXT,DATE))(default:NONE)')  {|v| params[:c] = v}
+      opt.on('-d [UNIT]', ['YEAR', 'MONTH', 'DAY', 'HOUR', 'MINUTE', 'NONE'],
+             'date in -c = DATE(YEAR|MONTH|DAY|HOUR|MINUTE|NONE) (default:NONE)')  {|v| params[:d] = v}
       opt.on('-f [FILE]',
              'config file (default:config.yml)')  {|v| params[:f] = v}
       opt.on('-i [FOLDER, FOLDER, ..]', Array,
              'input folders (default:./in)')  {|v| params[:i] = v}
       opt.on('-l', 'log output(default:false)')  {|v| params[:l] = v}
       opt.on('-m [MODE]', ['SORT', 'LIST', 'CONF', 'NONE'],
-             'mode (SORT | LIST | CONF | NONE) (default:NONE)')  {|v| params[:m] = v}
+             'mode (SORT|LIST|CONF|NONE) (default:NONE)')  {|v| params[:m] = v}
       opt.on('-o [FOLDER]',
              'output folder (default:./out)')  {|v| params[:o] = v}
       opt.on('-s [STRING]',/^[0-9]{1,3}[A-Z]{1,2}$/,
@@ -55,7 +57,7 @@ class Opt < Col
     params
   end
 
-  def init
+  def init # コンフィグ初期化
     cputs "[[init mode]]"
     unless File.exist?("in") # inファイル
       cputs "make input folder."
@@ -103,6 +105,7 @@ class Opt < Col
       "input_folders" => ["in"],
       "output_folder" => "out",
       "mode" => "NONE",
+      "date" => "NONE",
       "classification" => "NONE",
       "log" => nil
     }
@@ -137,6 +140,11 @@ class Opt < Col
       err.push(Convert.opt_name("m"))
     end
 
+    if res[:d].nil? # -mでのモードが該当しないとエラー(optperseによりnilになる)
+      cerr "ERROR: invalid argument -d!(syntax error)"
+      err.push(Convert.opt_name("d"))
+    end
+
     unless res[:c].nil? # -cがnilじゃない時はopt指定時のみ
       j = ["EXT", "SIZE", "DATE", "NONE"]
       res[:c].each do |sort|
@@ -151,7 +159,6 @@ class Opt < Col
       res[:c] = ["NONE"]
     end
 
-    puts res[:s]
     if res[:s].nil? # -mでのモードが該当しないとエラー
         cerr "ERROR: invalid argument -s!(syntax error)"
         err.push(Convert.opt_name("s"))      
@@ -167,7 +174,6 @@ class Opt < Col
         err.push(Convert.opt_name("s"))
       end
     end
-
 
     
     Display.conf(res,err) if err.length != 0 # エラー内容表示

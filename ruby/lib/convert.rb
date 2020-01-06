@@ -58,7 +58,15 @@ class Convert # 小規模の変換等の機能の格納
     else nil
     end
   end
-  
+
+  def self.num_date(num) # 数字 -> 時間単位
+    if num.to_i >=1 && num.to_i <=5
+      list = ['YEAR','MONTH','DAY','HOUR','MINUTE']
+      eval("list[#{num.to_i-1}]")
+    else nil
+    end
+  end
+
   def self.num_color(num) # 数字 -> 色
     if num.to_i >=0 && num.to_i <=6
       #        0     1      2       3        4         5       6       7      8
@@ -84,6 +92,7 @@ class Convert # 小規模の変換等の機能の格納
             "o" => "output_folder",
             "c" => "classification",
             "s" => "size",
+            "d" => "date",
             "l" => "log"
            }
     eval("list['#{str}']")
@@ -97,7 +106,7 @@ class Convert # 小規模の変換等の機能の格納
     res
   end
 
-  def self.num_byte(num) # バイト数の文字列変換
+  def self.num_byte(num) # バイト数 -> 文字列
     units = ["  B"," KB"," MB"," GB"," TB"," PB"] # 
     u = 0
     num = num.to_i
@@ -109,7 +118,7 @@ class Convert # 小規模の変換等の機能の格納
     num.to_s + units[u]
   end
 
-  def self.byte_num(byte) # 文字列のバイト数変換
+  def self.byte_num(byte) # 文字列 -> バイト数
     units = ["B","KB","MB","GB","TB","PB"] 
     /^([0-9]{1,3})([BKMGTP]{1,2})$/ =~ byte
       $1.to_i * (1000 ** units.index($2))
@@ -123,11 +132,20 @@ class Convert # 小規模の変換等の機能の格納
     str2
   end
 
-  def self.str_extfolder(str) # 拡張子抽出
+  def self.str_extfolder(str) # 拡張子抽出(folder用)
     str = str_ext(str)
     str.gsub!(/\./, "\\\.")
     str
   end
 
-  
+  def self.date_folder(date,unit) # 日付 -> 時間単位
+    list1 = ['YEAR','MONTH','DAY','HOUR','MINUTE']
+    list2 = ['%Y','-%m','-%d','-%H',':%M']
+
+    res = ""
+    for n in 0..list1.index(unit)
+      res = res + date.strftime(list2[n]) 
+    end
+    res
+  end
 end
