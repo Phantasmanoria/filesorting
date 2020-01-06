@@ -8,7 +8,7 @@ path = File.expand_path('./lib')
 require path + "/convert"
 require path + "/opt"
 require path + "/io"
-require path + "/sort"
+require path + "/classification"
 require path + "/display"
 require path + "/log"
 
@@ -26,7 +26,7 @@ end
 Col.cputs "START #{opt[:m]} MODE!" # モード選択宣言
 
 if opt[:m] == "SORT" 
-  files.list = Sort.main(files.list,opt)
+  files.list = Classification.main(files.list,opt)
 elsif opt[:m] == "LIST"
   Display.file_list(files.list)
 elsif opt[:m] == "CONF"

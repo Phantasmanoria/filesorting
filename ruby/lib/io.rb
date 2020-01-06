@@ -2,7 +2,7 @@
 class InOut < Col
   attr_accessor :list # ファイルリスト共有のため操作を受け付ける
   
-  def initialize(params) 
+  def initialize(params)
     @list = Array.new
     pwd = Dir.pwd # 初期ディレクトリ
     cputs "load input files."
@@ -13,7 +13,7 @@ class InOut < Col
 
   def input(pwd, out, folders) # 回帰的なファイル捜索
     for folder in folders
-#      cputs pwd 
+      cputs pwd 
       Dir.chdir(pwd) # 現在立っている場所
       Dir.chdir(folder) # 指名された場所に移動する
       tpwd = Dir.pwd

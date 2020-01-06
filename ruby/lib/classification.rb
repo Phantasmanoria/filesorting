@@ -1,5 +1,5 @@
 # coding: utf-8
-class Sort < Col # 移動先の変更を行う
+class Classification < Col # 移動先の変更を行う
 
   def self.main(list, opt)
     puts list
@@ -42,19 +42,27 @@ class Sort < Col # 移動先の変更を行う
 
 
   def self.size(list, opt) # サイズ
+    if opt[:s] == "NONE" # NONE時はここで入力
+      cputs ["input interval size(e.g. 24KB 400MB)",3]
+      opts[:s] = cgets
+      
+      units = ["B","KB","MB","GB","TB","PB"] 
+      /^([0-9]{1,3})([BKMGTP]{1,2})$/ =~ byte # チェック
+      if $1.nil? || $2.nil? || $1.to_i == opt[:s]
+        cerr "ERROR: size #{$1} is wrong size!(number error)"
+      end
+      unless byte.include?($2)
+        cerr "ERROR: size #{$2} is wrong size!(byte error)"
+      end
+    end
+
     res = []
+
+    byte_size = Convert.byte_num(opt[:s]) # 変換
+    
     list.each do |file, path, info|
-      
-
-
-
-
-
-
-
-
-      
-      res.push([file, path+"/"+Convert.str_extfolder(file), info])
+      folder_name = Convert.num_byte(info.size/byte_size*byte_size+byte_size).gsub(/\s/,"") # 候補
+      res.push([file, path+"/"+folder_name, info]) # 更新
     end
     res
   end

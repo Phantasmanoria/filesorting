@@ -109,6 +109,13 @@ class Convert # 小規模の変換等の機能の格納
     num.to_s + units[u]
   end
 
+  def self.byte_num(byte) # 文字列のバイト数変換
+    units = ["B","KB","MB","GB","TB","PB"] 
+    /^([0-9]{1,3})([BKMGTP]{1,2})$/ =~ byte
+      $1.to_i * (1000 ** units.index($2))
+  end
+
+  
   def self.str_ext(str1) # 拡張子抽出
     str1 = str1.gsub(/[^\/]*\//, "")
     str2 = str1.sub(/[^\.]*\./, "")
