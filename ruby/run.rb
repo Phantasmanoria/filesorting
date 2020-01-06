@@ -18,12 +18,17 @@ option = Opt.new # オプション取得
 opt = option.param
 files = InOut.new(opt) # 入力リスト読み取り
 
+if opt[:l] # ログ機能の使用
+  time = Time.now.strftime("%Y%m%d-%H%M%S") # 時間取得
+  Log.output("log/"+time+".txt")  
+end
+
+  
 if opt[:m] == "NONE" # モード指定がない時, ここで選択する
   Col.cputs ["select mode! (1:SORT, 2:LIST, 3:CONF, 4:QUIT)", 3]
   opt[:m] = Convert.num_mode(Col.cgets)
 end
-
-
+  
 Col.cputs "START #{opt[:m]} MODE!" # モード選択宣言
 
 if opt[:m] == "SORT" 

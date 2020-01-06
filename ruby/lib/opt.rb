@@ -56,13 +56,17 @@ class Opt < Col
   
   def init # コンフィグ初期化
     cputs "[[init mode]]"
-    unless File.exist?("in") # inファイル
+    unless Dir.exist?("in") # inファイル
       cputs "make input folder."
       Dir.mkdir("in")
     end
-    unless File.exist?("out") # outファイル
+    unless Dir.exist?("out") # outファイル
       cputs "make output folder."
       Dir.mkdir("out")
+    end
+    unless Dir.exist?("log") # logファイル
+      cputs "make log folder."
+      Dir.mkdir("log")
     end
     FileUtils.rm("config.yml") if File.exist?("config.yml")
     mkconfig # configファイル作り直し
@@ -196,6 +200,12 @@ class Opt < Col
       end
     end
 
+    if res[:l] # -lがついている時, logファイルがない時は作成
+      unless Dir.exist?("log") # logファイル
+        cputs "make log folder."
+        Dir.mkdir("log")
+      end
+    end
     
     Display.conf(res,err) if err.length != 0 # エラー内容表示
     
