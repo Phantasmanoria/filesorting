@@ -102,7 +102,7 @@ class Convert # 小規模の変換等の機能の格納
     u = 0
     num = num.to_i
     
-    while num / 1000.0 > 1.0
+    while num / 1000.0 >= 1.0
       u += 1
       num /= 1000
     end
