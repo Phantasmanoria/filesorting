@@ -32,10 +32,11 @@ class Display < Col
              "mode" => "NONE",
              "input_folders" => "[\"in\"]",
              "output_folder" => File.expand_path("out"),
-             "log" => nil,
+             "log" => "false",
              "classification" => "[\"NONE\"]",
              "size" => "NONE",
-             "date" => "NONE"
+             "date" => "NONE",
+             "move" => "false"
             }
     val2 = eval("default['#{key}']")
     val2 == val1

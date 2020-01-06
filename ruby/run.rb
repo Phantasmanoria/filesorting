@@ -27,6 +27,7 @@ Col.cputs "START #{opt[:m]} MODE!" # モード選択宣言
 
 if opt[:m] == "SORT" 
   files.list = Classification.main(files.list,opt)
+  files.output(opt)
 elsif opt[:m] == "LIST"
   Display.file_list(files.list)
 elsif opt[:m] == "CONF"

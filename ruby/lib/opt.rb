@@ -38,6 +38,7 @@ class Opt < Col
              'output folder (default:./out)')  {|v| params[:o] = v}
       opt.on('-s [STRING]',/^[0-9]{1,3}[A-Z]{1,2}$/,
              'size interval in -c = SIZE(e.g. 24KB)(default:NONE)')  {|v| params[:s] = v}
+      opt.on('--mv', 'file cp -> file mv (default:false)')  {|v| params[:mv] = v}
       opt.on('--init', 'reset all settings (default:off)')  {|v| params[:init] = v}
       opt.parse!(ARGV)
     rescue => e # エラー処理
@@ -51,6 +52,8 @@ class Opt < Col
     params[:o] = "out" if params[:o].nil?
     params[:c] = ["NONE"] if params[:c].nil?
     params[:s] = "NONE" if params[:s].nil?
+    params[:l] = false if params[:l].nil?
+    params[:mv]= false if params[:mv].nil?
 
     init unless params[:init].nil? # initフラグがあれば初期化実行
 
@@ -91,7 +94,8 @@ class Opt < Col
     res[:o] = yaml[:output_folder] if yaml[:output_folder]
     res[:m] = yaml[:mode] if yaml[:mode] 
     res[:c] = yaml[:classification] if yaml[:classification] 
-    res[:l] = true if yaml[:log] == "true"
+    res[:l] = yaml[:log] == "true" ? true : false
+    res[:mv]= yaml[:move] == "true" ? true : false
 
     res[:f] = conf # conf情報上書き
     
@@ -106,8 +110,11 @@ class Opt < Col
       "output_folder" => "out",
       "mode" => "NONE",
       "date" => "NONE",
+      "size" => "NONE",
       "classification" => "NONE",
-      "log" => nil
+      "log" => "false",
+      "move" => "false",
+
     }
     YAML.dump(data, File.open("config.yml", "w"))
   end
@@ -121,10 +128,15 @@ class Opt < Col
 
     err = [] # エラー格納
 
-    for f_name in res[:i] # -iでのフォルダが存在しないとエラー
-      unless Dir.exist?(f_name)
+    for f_name in res[:i] 
+      unless Dir.exist?(f_name) # -iでのフォルダが存在しないとエラー
         cerr "ERROR: input_folder #{f_name} is not exist!"
         err.push(Convert.opt_name("i"))
+      end
+      if File.expand_path(f_name) == File.expand_path(res[:o]) # -iと-oが同じならエラー
+        cerr "ERROR: input_folder and output_folder is same folder!"
+        err.push(Convert.opt_name("i"))
+        err.push(Convert.opt_name("o"))
       end
     end
 
@@ -140,7 +152,7 @@ class Opt < Col
       err.push(Convert.opt_name("m"))
     end
 
-    if res[:d].nil? # -mでのモードが該当しないとエラー(optperseによりnilになる)
+    if res[:d].nil? # -dでのモードが該当しないとエラー(optperseによりnilになる)
       cerr "ERROR: invalid argument -d!(syntax error)"
       err.push(Convert.opt_name("d"))
     end

@@ -8,7 +8,6 @@ class InOut < Col
     cputs "load input files."
     input(pwd, params[:o], params[:i])
     Dir.chdir(pwd) # 初期ディレクトリ
-#    puts @list
   end
 
   def input(pwd, out, folders) # 回帰的なファイル捜索
@@ -17,22 +16,25 @@ class InOut < Col
       Dir.chdir(pwd) # 現在立っている場所
       Dir.chdir(folder) # 指名された場所に移動する
       tpwd = Dir.pwd
+
       for file in Dir.glob("*") # 移動先でファイル捜索
         break if file.nil?
-        path = tpwd + "/"+ file # 捜査ファイルのパス確保
+        path = tpwd + "/" + file # 捜査ファイルのパス確保
         if File.directory?(path) # ディレクトリならその中を再帰捜索
-#          cputs [path, 1]
           input(tpwd, out, [path])
         elsif File.file?(path) # ファイルならリスト挿入
-#          puts out
           @list.push([path,out,File.stat(path)]) # [ファイルの初期パス, 初期移動先パス, 情報]
         end
       end
+      
     end
+    
   end
 
-  def output
-
+  def output(opt)
+    cputs "output files."
+    
+    
 
   end
   

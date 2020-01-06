@@ -93,7 +93,8 @@ class Convert # 小規模の変換等の機能の格納
             "c" => "classification",
             "s" => "size",
             "d" => "date",
-            "l" => "log"
+            "l" => "log",
+            "mv"=> "move"
            }
     eval("list['#{str}']")
   end
