@@ -325,3 +325,7 @@ move: 'false'
 入力が真偽値(Rubyの仕様上で言えば存在はしないが...)である`log`と`move`は, 
 内容をバッククォートで`true`か`false`で書けば変更できる.  
 
+
+## LICENSE
+
+This software is released under the MIT License, see LICENSE.md
