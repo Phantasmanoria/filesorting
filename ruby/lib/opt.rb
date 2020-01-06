@@ -8,12 +8,13 @@ class Opt < Col
   def initialize
     cputs "load options."
     param = get_opt
-    cputs "load config_file."
+    cputs "load config file."
     yaml = yaml_load(param[:f])
     cputs "check options."
     mix_check(param,yaml)
   end
 
+  
   def param # paramの取得(外部取得を防ぐため)
     @params
   end
@@ -21,7 +22,8 @@ class Opt < Col
   private
   def get_opt # オプションから情報を入手
     opt = OptionParser.new
-    params = {:d => "NONE", :m => "NONE"} # 初期値設定
+    params = {:f => "config.yml"}
+#    params = {:d => "NONE", :m => "NONE", :f => "config.yml"} # 初期値設定
     begin
       opt.on('-c [MODE, MODE...]',Array,
              'classification (EXT,SIZE,DATE(e.g. EXT,DATE))(default:NONE)')  {|v| params[:c] = v}
@@ -47,19 +49,20 @@ class Opt < Col
     end
 
     # 初期値設定
-    params[:f] = "config.yml" if params[:f].nil?
-    params[:i] = ["in"] if params[:i].nil?
-    params[:o] = "out" if params[:o].nil?
-    params[:c] = ["NONE"] if params[:c].nil?
-    params[:s] = "NONE" if params[:s].nil?
-    params[:l] = false if params[:l].nil?
-    params[:mv]= false if params[:mv].nil?
+#    params[:f] = "config.yml" if params[:f].nil?
+#    params[:i] = ["in"] if params[:i].nil?
+#    params[:o] = "out" if params[:o].nil?
+#    params[:c] = ["NONE"] if params[:c].nil?
+#    params[:s] = "NONE" if params[:s].nil?
+#    params[:l] = false if params[:l].nil?
+#    params[:mv]= false if params[:mv].nil?
 
     init unless params[:init].nil? # initフラグがあれば初期化実行
 
     params
   end
 
+  
   def init # コンフィグ初期化
     cputs "[[init mode]]"
     unless File.exist?("in") # inファイル
@@ -76,13 +79,18 @@ class Opt < Col
     exit 0 # 終了
   end
 
+  
   def yaml_load(conf) # yaml読み込み
+    conft = conf
     until File.exist?(conf) 
-      cerr "ERROR: config_file #{conf} is not exist!"
-      if conf != "config.yml"  # -fのコンフィグファイルが存在しないと標準ファイルに変更
-        cputs "change from #{conf} to config.yml"
+      cerr "ERROR: config file #{conf} is not exist!"
+      if conft != "config.yml"  # -fのコンフィグファイルが存在しないと標準ファイルに変更
+        cputs ["change config file as config.yml from #{conf}", 5]
+        conft = "#{conf} -> config.yml"
         conf = "config.yml"
+        cputs "reload config file."
       else # 標準ファイルがなければ作成
+        cerr "ERROR: config_file config.yml is not exist!"
         mkconfig
       end      
     end
@@ -90,14 +98,16 @@ class Opt < Col
     yaml = YAML.load_file(conf) until yaml # 読み込み
     res = {}
     # 情報読み取り
-    res[:i] = yaml[:input_folders] if yaml[:input_folders] 
-    res[:o] = yaml[:output_folder] if yaml[:output_folder]
-    res[:m] = yaml[:mode] if yaml[:mode] 
-    res[:c] = yaml[:classification] if yaml[:classification] 
-    res[:l] = yaml[:log] == "true" ? true : false
-    res[:mv]= yaml[:move] == "true" ? true : false
+    res[:i] = yaml["input_folders"] unless yaml["input_folders"].nil?
+    res[:o] = yaml["output_folder"] unless yaml["output_folder"].nil?
+    res[:m] = yaml["mode"] unless yaml["mode"].nil?
+    res[:s] = yaml["size"] unless yaml["size"].nil?
+    res[:d] = yaml["date"] unless yaml["date"].nil?
+    res[:c] = yaml["classification"] unless yaml["classification"].nil?
+    res[:l] = yaml["log"] == "true" ? true : false
+    res[:mv]= yaml["move"] == "true" ? true : false
 
-    res[:f] = conf # conf情報上書き
+    res[:f] = conft # conf情報上書き
     
     res
   end
@@ -111,7 +121,7 @@ class Opt < Col
       "mode" => "NONE",
       "date" => "NONE",
       "size" => "NONE",
-      "classification" => "NONE",
+      "classification" => ["NONE"],
       "log" => "false",
       "move" => "false",
 
@@ -122,9 +132,19 @@ class Opt < Col
   
   def mix_check(param, yaml) # オプションの統合と有効判定
 
+    optdefault = {:f=>"config.yml", # 最初のopt設定
+                  :i=>["in"],
+                  :o=>"out",
+                  :c=>["NONE"],
+                  :s=>"NONE",
+                  :l=>false,
+                  :mv=>false
+                 }
+    
     conf = yaml[:f] # fオプションのみ救済
-    res = yaml.merge(param) # yaml設定よりもopt設定の方を優先で上書き
+    res = (optdefault.merge(yaml)).merge(param) # opt初期 < yaml設定 < opt指定で優先で上書き
     res[:f] = conf # fオプションの適応
+
 
     err = [] # エラー格納
 
@@ -157,7 +177,7 @@ class Opt < Col
       err.push(Convert.opt_name("d"))
     end
 
-    unless res[:c].nil? # -cがnilじゃない時はopt指定時のみ
+    unless res[:c] != ["NONE"] # -cがNONEじゃない時は指定時のみ
       j = ["EXT", "SIZE", "DATE", "NONE"]
       res[:c].each do |sort|
         if not j.include?(sort) # 候補外はエラー
@@ -167,8 +187,6 @@ class Opt < Col
           res[:c] = ["NONE"]
         end
       end
-    else
-      res[:c] = ["NONE"]
     end
 
     if res[:s].nil? # -mでのモードが該当しないとエラー

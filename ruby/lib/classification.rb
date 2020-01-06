@@ -6,7 +6,7 @@ class Classification < Col # 移動先の変更を行う
 
     if opt[:c].include?("NONE") # NONE時はここで入力
       tmp = []; c = "" # 一時変数
-      cprint ['input classification (EXT, SIZE, DATE (e.g. EXT,DATE)) stop: e ',3]
+      cputs ['input classification (EXT, SIZE, DATE (e.g. EXT,DATE)) stop: e ',3]
       tmp.push(c) while (c = Col.cgets) != "e"
 
       j = ["EXT", "SIZE", "DATE"] # 検証
