@@ -34,8 +34,25 @@ class InOut < Col
   def output(opt)
     cputs "output files."
     
+    if opt[:mv] # move判定
+      cputs "file mode :move"
+    else
+      cputs "file mode :copy"
+    end
     
+    @list.each do |f_in, f_out, info|
+      unless File.directory?(f_out) # フォルダがない時, 作成
+        FileUtils.mkdir_p(f_out)
+      end
+      if opt[:mv] # 実行
+        FileUtils.mv(f_in,f_out)
+      else
+        FileUtils.cp(f_in,f_out)
+      end
+      cputs [[f_in],[" -> ",3],[f_out]] # 結果表示
+    end
 
+    cputs ["file sorting done!", 7]
   end
   
 end

@@ -22,8 +22,8 @@ class Opt < Col
   private
   def get_opt # オプションから情報を入手
     opt = OptionParser.new
-    params = {:f => "config.yml"}
-#    params = {:d => "NONE", :m => "NONE", :f => "config.yml"} # 初期値設定
+    params = {:f => "config.yml"} # 初期値
+
     begin
       opt.on('-c [MODE, MODE...]',Array,
              'classification (EXT,SIZE,DATE(e.g. EXT,DATE))(default:NONE)')  {|v| params[:c] = v}
@@ -47,15 +47,6 @@ class Opt < Col
       cerr "ERROR: #{e}.\nSee option!\n#{opt}"
       exit
     end
-
-    # 初期値設定
-#    params[:f] = "config.yml" if params[:f].nil?
-#    params[:i] = ["in"] if params[:i].nil?
-#    params[:o] = "out" if params[:o].nil?
-#    params[:c] = ["NONE"] if params[:c].nil?
-#    params[:s] = "NONE" if params[:s].nil?
-#    params[:l] = false if params[:l].nil?
-#    params[:mv]= false if params[:mv].nil?
 
     init unless params[:init].nil? # initフラグがあれば初期化実行
 

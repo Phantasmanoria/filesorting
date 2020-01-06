@@ -68,7 +68,7 @@ class Convert # 小規模の変換等の機能の格納
   end
 
   def self.num_color(num) # 数字 -> 色
-    if num.to_i >=0 && num.to_i <=6
+    if num.to_i >=0 && num.to_i <=8
       #        0     1      2       3        4         5       6       7      8
       list = ["red","blue","green","yellow","magenta","white","black","cyan","default"]
       eval("list[#{num.to_i}]")
@@ -131,12 +131,6 @@ class Convert # 小規模の変換等の機能の格納
     str2 = str1.sub(/[^\.]*\./, "")
     str2= "NONE" if str1 == str2
     str2
-  end
-
-  def self.str_extfolder(str) # 拡張子抽出(folder用)
-    str = str_ext(str)
-    str.gsub!(/\./, "\\\.")
-    str
   end
 
   def self.date_folder(date,unit) # 日付 -> 時間単位

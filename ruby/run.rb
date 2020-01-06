@@ -12,6 +12,7 @@ require path + "/classification"
 require path + "/display"
 require path + "/log"
 
+# main
 
 option = Opt.new # オプション取得
 opt = option.param

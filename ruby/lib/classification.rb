@@ -2,8 +2,6 @@
 class Classification < Col # 移動先の変更を行う
 
   def self.main(list, opt)
-    puts list
-
     if opt[:c].include?("NONE") # NONE時はここで入力
       tmp = []; c = "" # 一時変数
       cputs ['input classification (EXT, SIZE, DATE (e.g. EXT,DATE)) stop: e ',3]
@@ -26,8 +24,6 @@ class Classification < Col # 移動先の変更を行う
       list = date(list, opt) if sort == "DATE"
     end
 
-    puts list
-
     list
   end
 
@@ -35,7 +31,7 @@ class Classification < Col # 移動先の変更を行う
   def self.ext(list, opt) # 拡張子
     res = []
     list.each do |file, path, info|
-      res.push([file, path+"/"+Convert.str_extfolder(file), info])
+      res.push([file, path+"/"+Convert.str_ext(file), info])
     end
     res
   end
