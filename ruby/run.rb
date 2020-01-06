@@ -1,7 +1,6 @@
 # coding: utf-8
 require 'optparse' # optパーサー読み取り
 require 'fileutils' # ファイル操作
-require 'ruby-progressbar' # 経過時間表示 
 
 #外部クラス読み込み
 path = File.expand_path('./lib')
@@ -20,7 +19,7 @@ files = InOut.new(opt) # 入力リスト読み取り
 
 if opt[:l] # ログ機能の使用
   time = Time.now.strftime("%Y%m%d-%H%M%S") # 時間取得
-  Log.output("log/"+time+".txt")  
+  Log.output("log/"+time+".log")  
 end
 
   
@@ -42,6 +41,6 @@ elsif opt[:m] == "QUIT"
   Col.cputs "quit this program."
   exit 0
 else # 例外処理(直接入力時に発揮)
-  Col.cerr "ERROR: mode #{opt[:m]} is wrong mode!"
+  Col.cerr "ERROR: input wrong mode!"
   exit 1
 end

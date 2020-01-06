@@ -1,0 +1,11 @@
+---
+input_folders:
+- in
+output_folder: out
+mode: NONE
+date: NONE
+size: NONE
+classification:
+- NONE
+log: 'false'
+move: 'false'
