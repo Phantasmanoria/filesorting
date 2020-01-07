@@ -12,7 +12,6 @@ class InOut < Col
 
   def input(pwd, out, folders) # 回帰的なファイル捜索
     for folder in folders
-      cputs pwd 
       Dir.chdir(pwd) # 現在立っている場所
       Dir.chdir(folder) # 指名された場所に移動する
       tpwd = Dir.pwd

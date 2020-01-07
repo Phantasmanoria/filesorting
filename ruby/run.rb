@@ -1,4 +1,8 @@
 # coding: utf-8
+
+# Copyright (c) 2020 Phantasmanoria
+# This software is released under the MIT License, see LICENSE.md
+
 require 'optparse' # optパーサー読み取り
 require 'fileutils' # ファイル操作
 

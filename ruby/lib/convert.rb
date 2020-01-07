@@ -51,21 +51,29 @@ end
 
 class Convert # 小規模の変換等の機能の格納
 
-  def self.num_mode(num) # 数字 -> モード
-    if num.to_i >=1 && num.to_i <=4
-      list = ["SORT", "LIST", "CONF", "QUIT"]
+  def self.num_str(num,s) # 数字 -> 各文字
+    list = [["SORT", "LIST", "CONF", "QUIT"],
+            ['YEAR','MONTH','DAY','HOUR','MINUTE'],
+            ['EXT','SIZE','DATE']]
+    list = list[s]
+    if num.to_i >=1 && num.to_i <= list.length
       eval("list[#{num.to_i-1}]")
     else nil
-    end
+    end    
+  end
+  
+  def self.num_mode(num) # 数字 -> モード
+    num_str(num,0)
   end
 
   def self.num_date(num) # 数字 -> 時間単位
-    if num.to_i >=1 && num.to_i <=5
-      list = ['YEAR','MONTH','DAY','HOUR','MINUTE']
-      eval("list[#{num.to_i-1}]")
-    else nil
-    end
+    num_str(num,1)
   end
+
+  def self.num_class(num) # 数字 -> 分類方法
+    num_str(num,2)
+  end
+  
 
   def self.num_color(num) # 数字 -> 色
     if num.to_i >=0 && num.to_i <=8
@@ -101,6 +109,7 @@ class Convert # 小規模の変換等の機能の格納
 
   def self.str_reduct(str,len,side="l") # 文字列の略化
     res = str; len -= 1
+    str.chars.each {|c| len -= 1 if c.bytesize != 1} # マルチバイトに対する処置
     res = "~"+res[str.length-len,len] if str.length > len+1 # オーバー時に縮小
     res = res.ljust(len+1) if side == "l" # 左調整
     res = res.rjust(len+1) if side == "r" # 右調整
@@ -144,3 +153,4 @@ class Convert # 小規模の変換等の機能の格納
     res
   end
 end
+
