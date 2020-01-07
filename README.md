@@ -9,7 +9,7 @@ Perl版とRuby版があるが, Perl版をもう一度作り直したのがRuby�
 汚すぎて書き直す気が起きないくらいにはスパゲッティーコードしてる.  
 ていうかコメント書かなさすぎてそもそもわけわからない事態になってる.  
 比較の対象とするためにここに残す.  
-perl版のREAD MEは[こちら](https://github.com/Phantasmanoria/filesorting/blob/master/perl/guide.txt)を参照.  
+perl版のREADMEは[こちら](https://github.com/Phantasmanoria/filesorting/blob/master/perl/guide.txt)を参照.  
 
 ## Ruby版
 
@@ -57,7 +57,7 @@ Usage: run [options]
         --mv                         file cp -> file mv (default:false)
         --init                       reset all settings (default:off)
 ```
-オプションの読み込みは**初期値**<**設定ファイル**<**オプション指定**の優先度で行われる.  
+オプションの読み込みは**オプション指定 > 設定ファイル > 初期値**の優先度で行われる.  
 
 ### 分類オプション(-c)
 
@@ -206,7 +206,7 @@ CONFIG LIST(default:green, modify:blue, error:red)
 このプログラムで読み込まれているオプションを一覧で確認できる.  
 `value`の色について, 値が初期設定から変わっていないものは**緑**, 変更があるものは**青**, エラーがあるものは**赤**で表示が行われる.  
 赤表示が現れるのは, オプションチェックの時にエラーが見つかり, 強制的にこのモードが開かれる時のみとなる.  
-オプションの読み込みは**初期値**<**設定ファイル**<**オプション指定**の優先度で行われる.  
+オプションの読み込みはオプションの読み込みは**オプション指定 > 設定ファイル > 初期値**の優先度で行われる.  
 
 
 ### 終了モード(QUIT)
