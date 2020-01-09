@@ -150,7 +150,7 @@ class Convert # 小規模の変換等の機能の格納
   
   def self.str_ext(str1) # 拡張子抽出
     str1 = str1.gsub(/[^\/]*\//, "")
-    str2 = str1.sub(/[^\.]*\./, "")
+    str2 = str1.gsub(/[^\.]*\./, "")
     str2= "NONE" if str1 == str2
     str2
   end
