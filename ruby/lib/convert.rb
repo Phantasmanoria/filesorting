@@ -104,15 +104,28 @@ class Convert # 小規模の変換等の機能の格納
             "l" => "log",
             "mv"=> "move"
            }
-    eval("list['#{str}']")
+    eval("list['#{str}']")  
   end
 
   def self.str_reduct(str,len,side="l") # 文字列の略化
-    res = str; len -= 1
-    str.chars.each {|c| len -= 1 if c.bytesize != 1} # マルチバイトに対する処置
-    res = "~"+res[str.length-len,len] if str.length > len+1 # オーバー時に縮小
-    res = res.ljust(len+1) if side == "l" # 左調整
-    res = res.rjust(len+1) if side == "r" # 右調整
+    res = ""; len -= 2; n,m = 0,0;
+    str.reverse.chars do |c| # マルチバイト処置
+      if n < len
+        n += c.bytesize != 1 ? 2 : 1
+        m += 1
+      end
+    end
+
+    if n == len + 1 # 各読み込みの長さと次のマルチバイト場合で換算
+      res = "~"+str[str.length-m,m]
+    elsif str.reverse.chars[m].bytesize != 1
+      res = " ~"+str[str.length-m,m]
+    else
+      res = "~"+str[str.length-m-1,m+1]
+    end
+    
+    res = res.ljust(len+2) if side == "l" && len > str.length # 左調整
+    res = res.rjust(len+2) if side == "r" && len > str.length # 右調整
     res
   end
 
